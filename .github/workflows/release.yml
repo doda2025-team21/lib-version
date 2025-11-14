@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  packages: write
   
 jobs:
   release:
@@ -23,8 +24,8 @@ jobs:
           java-version: '17'
           # must match <id> in pom's <distributionManagement>
           server-id: github
-          server-username: GITHUB_ACTOR
-          server-password: GITHUB_TOKEN
+          server-username: ${{ github.actor }}
+          server-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Show tag and pom version (debug)
         run: |
