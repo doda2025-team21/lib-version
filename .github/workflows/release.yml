@@ -6,7 +6,7 @@ on:
       - 'v*'   # v1.0.0, v1.0.1, etc.
 
 permissions:
-  contents: write
+  contents: read
   packages: write
   
 jobs:
@@ -20,12 +20,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
+          distribution: 'temurin'
           java-version: '17'
-          # must match <id> in pom's <distributionManagement>
-          server-id: github
-          server-username: ${{ github.actor }}
-          server-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Show tag and pom version (debug)
         run: |
@@ -33,6 +29,6 @@ jobs:
           echo "POM version is: $(mvn -q -Dexpression=project.version -DforceStdout help:evaluate)"
 
       - name: Deploy to GitHub Packages
-        run: mvn -B clean deploy
+        run: mvn --batch-mode deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
