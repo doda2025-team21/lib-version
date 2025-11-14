@@ -1,4 +1,4 @@
-package tudelft.doda25.team21;
+package tudelft.doda2025.team21;
 
 import java.io.IOException;
 import java.io.InputStream;
