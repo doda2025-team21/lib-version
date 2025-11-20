@@ -36,6 +36,17 @@ jobs:
           echo "BASE_VERSION=$BASE_VERSION" >> $GITHUB_ENV
           echo "Base version: $BASE_VERSION"
 
+      - name: Strip SNAPSHOT suffix
+        id: strip_snapshot
+        run: |
+          BASE_VERSION_RAW="${BASE_VERSION_RAW}"
+
+          # remove trailing "-SNAPSHOT" if it exists
+          BASE_NO_SNAPSHOT="${BASE_VERSION_RAW%-SNAPSHOT}"
+
+          echo "Base version without SNAPSHOT: $BASE_NO_SNAPSHOT"
+          echo "BASE_NO_SNAPSHOT=$BASE_NO_SNAPSHOT" >> $GITHUB_ENV
+
       - name: Create pre-release version string
         id: prerelease
         run: |
