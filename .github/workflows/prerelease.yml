@@ -32,13 +32,16 @@ jobs:
       - name: Determine base version from pom.xml
         id: base_version
         run: |
+          mvn versions:set -DremoveSnapshot
           BASE_VERSION=$(mvn -q -Dexpression=project.version -DforceStdout help:evaluate)
           echo "BASE_VERSION=$BASE_VERSION" >> $GITHUB_ENV
           echo "Base version: $BASE_VERSION"
-
+    
+        #BASE_NO_SNAPSHOT is not used yet. TEST mvn versions:set -DremoveSnapshot first
       - name: Strip SNAPSHOT suffix
         id: strip_snapshot
         run: |
+          mvn versions:set -DremoveSnapshot
           BASE_VERSION_RAW="${BASE_VERSION_RAW}"
 
           # remove trailing "-SNAPSHOT" if it exists
