@@ -32,6 +32,8 @@ jobs:
       - name: Determine base version from pom.xml
         id: base_version
         run: |
+          # remove -SNAPSHOT to get base version
+          mvn versions:set -DremoveSnapshot
           BASE_VERSION=$(mvn -q -Dexpression=project.version -DforceStdout help:evaluate)
           echo "BASE_VERSION=$BASE_VERSION" >> $GITHUB_ENV
           echo "Base version: $BASE_VERSION"
