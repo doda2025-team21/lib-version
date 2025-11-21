@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - '**'           # 所有分支
+    branches-ignore:
+      - main
     tags: []
 
 permissions:
