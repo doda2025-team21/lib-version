@@ -72,7 +72,10 @@ jobs:
           git commit -m "Release ${VERSION}"
 
           # Create a tag that matches the version
-          git tag "v${VERSION}"
+          # if this is workflow_dispatch, tag it
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            git tag "v${VERSION}"
+          fi
 
           # Push commit and tag
           git push origin main
