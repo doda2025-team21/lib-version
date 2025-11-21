@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       release_version:
-        description: 'Release version (e.g. 1.2.3)'
+        description: 'Release version (e.g. v1.2.3)'
         required: true
 
 permissions:
@@ -40,8 +40,13 @@ jobs:
         id: get_version
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VERSION="${{ github.event.inputs.release_version }}"
+            echo "Triggered by workflow_dispatch"
+            TAG_NAME="${{ github.event.inputs.release_version }}"
+            echo "Workflow dispatch tag name: $TAG_NAME"
+            VERSION="${TAG_NAME#v}"
+            echo "Version from input: $VERSION"
           else
+            echo "Triggered by release event"
             TAG_NAME="${{ github.event.release.tag_name }}"
             echo "Release tag name: $TAG_NAME"
 
