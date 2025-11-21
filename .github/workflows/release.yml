@@ -1,9 +1,6 @@
 name: Release lib-version
 
 on:
-  push:
-    tags:
-      - 'v*'   # v1.0.0, v1.0.1, etc.
   workflow_dispatch:
     inputs:
       release_version:
@@ -35,14 +32,11 @@ jobs:
       #   run: |
       #     echo "Tag is: $GITHUB_REF_NAME"
       #     echo "POM version is: $(mvn -q -Dexpression=project.version -DforceStdout help:evaluate)"
+
       - name: Determine release version
         id: get_version
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VERSION="${{ github.event.inputs.release_version }}"
-          else
-            VERSION="${GITHUB_REF_NAME#v}"
-          fi
+          VERSION="${{ github.event.inputs.release_version }}"
 
           echo "Release version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
@@ -52,14 +46,33 @@ jobs:
           mvn -B versions:set -DnewVersion=${VERSION}
           mvn -B versions:commit
       
-      - name: Show current version (debug)
-        run: |
-          mvn -q -Dexpression=project.version -DforceStdout help:evaluate
+      # - name: Show current version (debug)
+      #   run: |
+      #     mvn -q -Dexpression=project.version -DforceStdout help:evaluate
 
+      - name: Commit release version and create tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Add files where the version is stored
+          git add pom.xml src/main/resources/version.properties
+
+          # Create a commit with the release version
+          git commit -m "Release ${VERSION}"
+
+          # Create a tag that matches the version
+          git tag "v${VERSION}"
+
+          # Push commit and tag
+          git push origin main
+          git push origin "v${VERSION}"
+      
       - name: Deploy stable release to GitHub Packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mvn -B clean deploy
+
 
       - name: Compute next SNAPSHOT version
         id: next_version
@@ -73,10 +86,12 @@ jobs:
           echo "Next snapshot version: $NEXT_VERSION"
           echo "NEXT_VERSION=$NEXT_VERSION" >> $GITHUB_ENV
 
+
       - name: Set pom.xml to next SNAPSHOT version
         run: |
           mvn -B versions:set -DnewVersion=${NEXT_VERSION}
           mvn -B versions:commit
+
 
       - name: Commit and push next SNAPSHOT version
         run: |
@@ -93,8 +108,3 @@ jobs:
           else
             git push origin HEAD:main
           fi
-
-      # - name: Deploy to GitHub Packages
-      #   run: mvn --batch-mode deploy
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
