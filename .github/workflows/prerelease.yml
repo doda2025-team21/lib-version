@@ -2,8 +2,6 @@ name: Pre-release lib-version (branches)
 
 on:
   push:
-    branches:
-      - '**'           # 所有分支
     branches-ignore:
       - main
     tags: []
