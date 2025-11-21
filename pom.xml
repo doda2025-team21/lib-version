@@ -6,7 +6,7 @@
 
     <groupId>tudelft.doda2025.team21</groupId>
     <artifactId>lib-version</artifactId>
-    <version>v1.4.3</version>
+    <version>v1.4.4-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <name>lib-version</name>
